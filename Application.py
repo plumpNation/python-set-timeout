@@ -1,16 +1,23 @@
 import time
-
-class State(object):
-    running = False
+from CaseService import getNextCases
 
 class Application:
+  CAN_POLL = False
+  POLL_INTERVAL = 1
 
-  def main(self, state):
-    while state.running:
-      print('sec')
-      print(state.running)
+  def allowPolling(self):
+    self.CAN_POLL = True
 
+  def disallowPolling(self):
+    self.CAN_POLL = False
+
+  def throttledPoll(self, seconds, action):
+    while self.CAN_POLL:
       try:
-          time.sleep(1)
+          action()
+          time.sleep(seconds)
       except:
           continue
+
+  def main(self):
+    self.throttledPoll(self.POLL_INTERVAL, getNextCases)
