@@ -1,16 +1,19 @@
 import time
 from Timer import Timer
 
-running = False
+################################################################################
 
-def loop_for(seconds):
-    global running
+class State:
+  running = False
 
-    running = True
+################################################################################
 
-    while running:
+def loop_for(seconds, state):
+    state.running = True
+
+    while state.running:
         print('sec')
-        print(running)
+        print(state.running)
         try:
             time.sleep(1)
         except:
@@ -21,9 +24,7 @@ def loop_for(seconds):
 timer = Timer()
 
 def some_fn():
-    global running
-
-    running = False
+    State.running = False
     print('Setting running to false')
 
 #  Above will execute some_fn call after 5 sec
@@ -35,4 +36,10 @@ timer.setTimeout(some_fn, 5.0)
 
 ################################################################################
 
-loop_for(5)
+print('START:')
+print(State.running)
+
+loop_for(5, State)
+
+print('END:')
+print(State.running)
