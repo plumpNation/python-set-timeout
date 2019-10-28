@@ -1,6 +1,7 @@
 
 from Timer import Timer
 from Application import Application
+from unittest.mock import MagicMock
 
 instance = Application()
 
@@ -10,21 +11,25 @@ def onTimeout():
 
 ################################################################################
 
-def runTest():
+def testThrottlePoll():
   timer = Timer()
 
   timer.setTimeout(onTimeout, 5)
 
   instance.allowPolling()
 
+  mock = MagicMock()
+
   # test the function
-  instance.main()
+  instance.throttledPoll(1, mock)
+
+  assert(mock.call_count == 4)
 
 
 ################################################################################
 
 print('START:')
 
-runTest()
+testThrottlePoll()
 
 print('END:')
