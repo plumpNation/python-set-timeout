@@ -1,23 +1,13 @@
+from time import sleep
 import time
 from CaseService import getNextCases
+from ratelimit import limits, sleep_and_retry
 
 class Application:
-  CAN_POLL = False
-  POLL_INTERVAL = 1
-
-  def allowPolling(self):
-    self.CAN_POLL = True
-
-  def disallowPolling(self):
-    self.CAN_POLL = False
-
-  def throttledPoll(self, seconds, action):
-    while self.CAN_POLL:
-      try:
-          action()
-          time.sleep(seconds)
-      except:
-          continue
+  @sleep_and_retry
+  @limits(calls=1, period=5)
+  def throttledPoll(self, action):
+    action()
 
   def main(self):
-    self.throttledPoll(self.POLL_INTERVAL, getNextCases)
+    self.throttledPoll(getNextCases)
