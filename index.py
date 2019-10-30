@@ -8,51 +8,41 @@ instance = Application()
 
 ################################################################################
 
-def testThrottlePollFail():
+# def testThrottlePollFail():
+#   mock = MagicMock()
+
+#   # test the function
+#   try:
+#     while True:
+#       instance.throttledPoll(mock)
+
+#   except RateLimitException:
+#     assert(False, 'this should never happen')
+
+def testThrottlePollWithSleep():
   mock = MagicMock()
+
+  throttledPoll = instance.createThrottledPoll(mock, calls=1, period=5)
 
   # test the function
   try:
-    while True:
-      instance.throttledPoll(mock)
-
-  except RateLimitException:
-    assert(mock.call_count == 1)
-
-def testThrottlePoll():
-  mock = MagicMock()
-
-  # test the function
-  try:
-    instance.throttledPoll(mock)
+    throttledPoll()
     sleep(5)
-    instance.throttledPoll(mock)
+    throttledPoll()
 
   except RateLimitException:
     assert(False, 'exception should never happen')
 
+  print(mock.call_count)
   assert(mock.call_count == 2)
 
 def testThrottlePoll():
   mock = MagicMock()
+  throttledPoll = instance.createThrottledPoll(mock, calls=1, period=2)
 
   # test the function
-  try:
-    instance.throttledPoll(mock)
-    sleep(5)
-    instance.throttledPoll(mock)
-
-  except RateLimitException:
-    assert(False, 'exception should never happen')
-
-  assert(mock.call_count == 2)
-
-def testThrottlePoll():
-  mock = MagicMock()
-
-  # test the function
-  instance.throttledPoll(mock)
-  instance.throttledPoll(mock)
+  throttledPoll()
+  throttledPoll()
 
   assert(mock.call_count == 2)
 
@@ -61,6 +51,8 @@ def testThrottlePoll():
 
 print('START')
 
-testThrottlePoll()
+# testThrottlePollFail()
+# testThrottlePoll()
+testThrottlePollWithSleep()
 
 print('END')
